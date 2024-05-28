@@ -17,6 +17,12 @@ def hello_world_post():
 def example_country_data():
     return jsonify(country_data)
 
+@app.route('/example/cities',methods=['GET'])
+def example_cities():
+    cities = list(country_data.keys())
+    return jsonify(cities)
+
+
 
 if __name__ == '__main__':
     app.run()
