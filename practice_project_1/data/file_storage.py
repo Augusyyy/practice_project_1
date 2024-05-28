@@ -1,9 +1,9 @@
-import pickle
+import json
 
 
 class FileStorage:
     def load_model_data(self,filename):
-        with open(filename, 'rb') as f:
+        with open(filename, 'r') as f:
            contents = f.read()
-           data = pickle.loads(contents)
+           data = json.loads(contents)
            return data
