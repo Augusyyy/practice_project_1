@@ -4,3 +4,8 @@ storage = FileStorage()
 
 country_data = storage.load_model_data('data/country.json')
 
+place_data = storage.load_model_data('data/place.json')
+
+amenity_data = storage.load_model_data('data/amenity.json')
+
+place_to_amenity_data = storage.load_model_data('data/place_to_amenity.json')
