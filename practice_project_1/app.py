@@ -8,7 +8,7 @@ def hello():
     return 'Hello World!'
 
 
-@app.route('/hello_world_post',methods=['POST'])
+@app.route('/',methods=['POST'])
 def hello_world_post():
     return 'Hello World!'
 
