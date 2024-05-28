@@ -1,7 +1,9 @@
 import uuid
 from datetime import datetime
+
+
 class City:
-    def __init__(self, id,created_at,updated_at,__name,__country_id):
+    def __init__(self,__name,__country_id):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now().timestamp()
         self.updated_at = datetime.now().timestamp()
