@@ -10,8 +10,9 @@ def hello():
 @app.route('/hello_world_post',methods=['POST'])
 def hello_world_post():
     return 'Hello World!'
+
 @app.route('/example/country_data',methods=['GET'])
-def exaple_country_data
+def exaple_country_data():
     return jsonify(country_data)
 
 
