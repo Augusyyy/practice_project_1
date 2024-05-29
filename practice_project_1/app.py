@@ -79,23 +79,17 @@ def example_places_reviews():
     for review_item in review_list:
 
         place_id = review_item["place_id"]
-        user_id = review_item["user_id"]
-
-        sub_out_put = {}
+        user_id = review_item["commentor_user_id"]
 
         for place_item in place_list:
             if place_item['id'] == place_id:
-                sub_out_put['place'] = place_item
+                review_item['place'] = place_item
 
         for user_item in user_list:
             if user_item['id'] == user_id:
-                sub_out_put['user'] = user_item
+                review_item['user'] = user_item
 
-        en_reviews.append(sub_out_put)
-
-    return jsonify(en_reviews)
-
-
+    return jsonify(review_data)
 
 
 if __name__ == '__main__':
