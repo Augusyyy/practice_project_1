@@ -91,6 +91,16 @@ def example_places_reviews():
 
     return jsonify(review_data)
 
+@app.route('/api/v1/users/<user_id> ', methods=['GET'])
+def users_specific_get(user_id):
+    user_list = user_data['User']
+    for user in user_list:
+        if user['id'] == user_id:
+            return jsonify(user)
+
+    return "User not found"
+
+
 
 if __name__ == '__main__':
     app.run()
