@@ -1,14 +1,12 @@
-from datetime import datetime
-
 from flask import Flask, jsonify, request
-from data import country_data, user
+from data import country_data
 from model.city import City
 from data import place_data
 from data import amenity_data
 from data import place_to_amenity_data
 from data import user_data
 from data import review_data
-from data.user import User
+from model.user import User
 
 
 app = Flask(__name__)
