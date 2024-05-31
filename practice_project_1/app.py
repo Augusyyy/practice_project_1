@@ -118,10 +118,10 @@ def users_post():
     if 'password' not in data:
         return jsonify({"error": "Missing password"})
 
-    first_name = data.get('first_name', '')
-    last_name = data.get('last_name', '')
     email = data['email']
     password = data['password']
+    first_name = data.get('first_name', '')
+    last_name = data.get('last_name', '')
 
     new_user = User(email, password, first_name, last_name)
 

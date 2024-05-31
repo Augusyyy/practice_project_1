@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class User:
-    def __init__(self, first_name, last_name, email, password):
+    def __init__(self, email, password, first_name, last_name):
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = self.created_at
