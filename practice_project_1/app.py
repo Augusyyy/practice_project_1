@@ -1,11 +1,14 @@
-from flask import Flask, jsonify
-from data import country_data
+from datetime import datetime
+
+from flask import Flask, jsonify, request
+from data import country_data, user
 from model.city import City
 from data import place_data
 from data import amenity_data
 from data import place_to_amenity_data
 from data import user_data
 from data import review_data
+from data.user import User
 
 
 app = Flask(__name__)
@@ -91,7 +94,7 @@ def example_places_reviews():
 
     return jsonify(review_data)
 
-@app.route('/api/v1/users/<user_id> ', methods=['GET'])
+@app.route('/api/v1/users/<user_id>', methods=['GET'])
 def users_specific_get(user_id):
     user_list = user_data['User']
     for user in user_list:
@@ -100,6 +103,48 @@ def users_specific_get(user_id):
 
     return "User not found"
 
+
+@app.route('/api/v1/users', methods=['POST'])
+def users_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if data is None:
+        return jsonify({"error": "Invalid JSON data"})
+    if 'email' not in data:
+        return jsonify({"error": "Missing email"})
+    if 'password' not in data:
+        return jsonify({"error": "Missing password"})
+
+    first_name = data.get('first_name', '')
+    last_name = data.get('last_name', '')
+    email = data['email']
+    password = data['password']
+
+    new_user = User(email, password, first_name, last_name)
+
+    user_data['User'].append({
+        'id': new_user.id,
+        'created_at': new_user.created_at.isoformat(),
+        'updated_at': new_user.updated_at.isoformat(),
+        'first_name': new_user.first_name,
+        'last_name': new_user.last_name,
+        'email': new_user.email,
+        'password': new_user.password
+    })
+
+    return_data = {
+        'id': new_user.id,
+        'created_at': new_user.created_at.isoformat(),
+        'updated_at': new_user.updated_at.isoformat(),
+        'first_name': new_user.first_name,
+        'last_name': new_user.last_name,
+        'email': new_user.email
+    }
+
+    return jsonify(return_data)
 
 
 if __name__ == '__main__':
