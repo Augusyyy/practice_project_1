@@ -308,6 +308,8 @@ def countries_specific_places_get(country_code):
 
 @app.route('/api/v1/cities_post', methods=['POST'])
 def cities_post():
+    city_data_list = []
+
     if not request.json:
         return jsonify({"message": "Missing JSON in request"})
 
@@ -326,16 +328,27 @@ def cities_post():
         if item['name'] == name and item['country_id'] == country_id:
             return jsonify({"error": "City already exists"})
 
-    new_city = {
-        "id": str(uuid.uuid4()),
-        "name": name,
-        "country_id": country_id,
-        "created_at": datetime.now().isoformat(),
-        "updated_at": datetime.now().isoformat()
-    }
-    city_data['City'].append(new_city)
+    new_city = City(name, country_id)
+    city_data_list.append({
+        "id": new_city.id,
+        "name": new_city.name,
+        "country_id": new_city.country_id,
+        "created_at": new_city.created_at,
+        "updated_at": new_city.updated_at
+        })
 
-    return jsonify(new_city)
+    return jsonify({
+        "id": new_city.id,
+        "name": new_city.name,
+        "country_id": new_city.country_id,
+        "created_at": new_city.created_at,
+        "updated_at": new_city.updated_at
+    })
+
+@app.route('/api/v1/cities_get', methods=['GET'])
+def cities_get():
+    city_data_list = city_data['City']
+    return jsonify(city_data_list)
 
 
 if __name__ == '__main__':
