@@ -379,32 +379,5 @@ def cities_del_post():
     return jsonify(city_del)
 
 
-@app.route('/api/v1/cities_del_post', methods=['POST'])
-def cities_del_post():
-    if not request.json:
-        return jsonify({"message": "Missing JSON in request"})
-
-    data = request.get_json()
-
-    if 'city_id' not in data:
-        return jsonify({"error": "Missing city_id"})
-
-    city_id = data['city_id']
-    city_data_list = city_data['City']
-    city_del = None
-
-    for i in range(len(city_data_list)):
-        if city_data_list[i]['id'] == city_id:
-            city_del = i
-            break
-
-    if city_del is None:
-        return jsonify({"error": "City not found"})
-
-    del city_data_list[city_del]
-
-    return jsonify(city_data_list)
-
-
 if __name__ == '__main__':
     app.run()
