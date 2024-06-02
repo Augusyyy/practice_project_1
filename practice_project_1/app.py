@@ -379,5 +379,41 @@ def cities_del_post():
     return jsonify(city_del)
 
 
+@app.route('/api/v1/cities_modify_post', methods=['POST'])
+def cities_modify_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"}), 400
+
+    data = request.get_json()
+
+    if 'id' not in data:
+        return jsonify({"error": "Missing id"}), 400
+
+    city_id = data['id']
+    new_name = data.get('name')
+    new_country_id = data.get('country_id')
+
+    city_data_list = city_data['City']
+    city_to_modify = None
+
+    for city in city_data_list:
+        if city['id'] == city_id:
+            city_to_modify = city
+            break
+
+    if city_to_modify is None:
+        return jsonify({"error": "City not found"}), 404
+
+    if new_name:
+        city_to_modify['name'] = new_name
+    if new_country_id:
+        city_to_modify['country_id'] = new_country_id
+
+    city_to_modify['updated_at'] = datetime.now().timestamp()
+
+    return jsonify(city_to_modify)
+
+
+
 if __name__ == '__main__':
     app.run()
