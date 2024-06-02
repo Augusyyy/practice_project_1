@@ -1,5 +1,7 @@
+import json
+import uuid
 from datetime import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from data import country_data
 from model.city import City
 from data import place_data
@@ -9,6 +11,7 @@ from data import user_data
 from data import review_data
 from model.user import User
 from model.country import Country
+from data import city_data
 
 
 app = Flask(__name__)
@@ -213,8 +216,123 @@ def countries_post():
         'code': new_country.code
     })
 
-    return jsonify(country_data)
+    return_data = {
+        'id': new_country.id,
+        'created_at': new_country.created_at.isoformat(),
+        'updated_at': new_country.updated_at.isoformat(),
+        'name': new_country.name,
+        'code': new_country.code
+    }
 
+    return jsonify(return_data)
+
+
+@app.route('/api/v1/countries', methods=['GET'])
+def countries_get():
+    countries_list = country_data['Country']
+    return countries_list
+
+
+@app.route('/api/v1/countries/<country_code>', methods=['GET'])
+def countries_specific_get(country_code):
+        country_to_return = None
+        for country in country_data['Country']:
+            if country['code'] == country_code:
+                country_to_return = country
+                break
+
+        if country_to_return is None:
+            return jsonify({"error": "Country not found"})
+
+        return jsonify(country_to_return)
+
+
+@app.route('/api/v1/countries/<country_code>/cities', methods=['GET'])
+def countries_specific_cities_get(country_code):
+    data = []
+    wanted_country_id = ""
+
+    country_data_list = country_data['Country']
+    city_data_list = city_data['City']
+
+    for item in country_data_list:
+        if item['code'] == country_code:
+            wanted_country_id = item['id']
+
+    for item in city_data_list:
+        if item['country_id'] == wanted_country_id:
+            data.append({
+                "city_id": item['id'],
+                "name": item['name'],
+                "country_id": item['country_id'],
+                "created_at": datetime.fromtimestamp(item['created_at']).isoformat(),
+                "updated_at": datetime.fromtimestamp(item['updated_at']).isoformat()
+            })
+
+    return json.dumps(data)
+
+
+@app.route('/api/v1/countries/<country_code>/places', methods=['GET'])
+def countries_specific_places_get(country_code):
+    data = []
+    wanted_country_id = ""
+    city_ids = []
+
+    country_data_list = country_data['Country']
+    city_data_list = city_data['City']
+    place_data_list = place_data['Place']
+
+    for item in country_data_list:
+        if item['code'] == country_code:
+            wanted_country_id = item['id']
+
+    for item in city_data_list:
+        if item['country_id'] == wanted_country_id:
+            city_ids.append(item['id'])
+
+    for item in place_data_list:
+        if item['city_id'] in city_ids:
+            data.append({
+                "place_id": item['id'],
+                "name": item['name'],
+                "city_id": item['city_id'],
+                "created_at": datetime.fromtimestamp(item['created_at']).isoformat(),
+                "updated_at": datetime.fromtimestamp(item['updated_at']).isoformat()
+            })
+
+    return json.dumps(data)
+
+
+@app.route('/api/v1/cities_post', methods=['POST'])
+def cities_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if 'name' not in data:
+        return jsonify({"error": "Missing name"})
+    if 'country_id' not in data:
+        return jsonify({"error": "Missing country_id"})
+
+    name = data['name']
+    country_id = data['country_id']
+
+    cities_data_list = city_data['City']
+    for item in cities_data_list:
+        if item['name'] == name and item['country_id'] == country_id:
+            return jsonify({"error": "City already exists"})
+
+    new_city = {
+       "id": str(uuid.uuid4()),
+        "name": name,
+        "country_id": country_id,
+        "created_at": datetime.now().timestamp(),
+        "updated_at": datetime.now().timestamp()
+    }
+    city_data['City'].append(new_city)
+
+    return jsonify(new_city)
 
 
 if __name__ == '__main__':
