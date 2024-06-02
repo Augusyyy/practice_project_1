@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, jsonify, request
 from data import country_data
 from model.city import City
@@ -7,6 +8,7 @@ from data import place_to_amenity_data
 from data import user_data
 from data import review_data
 from model.user import User
+from model.country import Country
 
 
 app = Flask(__name__)
@@ -143,6 +145,76 @@ def users_post():
     }
 
     return jsonify(return_data)
+
+@app.route('/api/v1/users_modify', methods=['POST'])
+def users_modify():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if data is None:
+        return jsonify({"error": "Invalid JSON data"})
+
+    user_id = data['id']
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    email = data.get('email')
+    password = data.get('password')
+
+    for user in user_data['User']:
+        if user['id'] == user_id:
+            user_modify = user
+            break
+
+    if user_modify is None:
+        return jsonify({"error": "User not found"})
+
+    if first_name:
+        user_modify['first_name'] = first_name
+    if last_name:
+        user_modify['last_name'] = last_name
+    if email:
+        user_modify['email'] = email
+    if password:
+        user_modify['password'] = password
+
+    user_modify['updated_at'] = datetime.now().isoformat()
+
+    return jsonify(user_modify)
+
+
+@app.route('/api/v1/countries', methods=['POST'])
+def countries_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if data is None:
+        return jsonify({"error": "Missing JSON data"})
+    if 'name' not in data:
+        return jsonify({"error": "Missing name"})
+    if data['name'] is None:
+        return jsonify({"error": "Missing name"})
+    if 'code' not in data:
+        return jsonify({"error": "Missing code"})
+
+    name = data['name']
+    code = data['code']
+
+    new_country = Country(code, name)
+
+    country_data['Country'].append({
+        'id': new_country.id,
+        'created_at': new_country.created_at.isoformat(),
+        'updated_at': new_country.updated_at.isoformat(),
+        'name': new_country.name,
+        'code': new_country.code
+    })
+
+    return jsonify(country_data)
+
 
 
 if __name__ == '__main__':
