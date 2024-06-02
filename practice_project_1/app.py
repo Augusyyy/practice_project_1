@@ -13,28 +13,28 @@ from model.user import User
 from model.country import Country
 from data import city_data
 
-
 app = Flask(__name__)
 
-@app.route('/',methods=['GET'])
+
+@app.route('/', methods=['GET'])
 def hello():
     return 'Hello World!'
 
 
-@app.route('/',methods=['POST'])
+@app.route('/', methods=['POST'])
 def hello_world_post():
     return 'Hello World!'
 
 
-@app.route('/example/country_data',methods=['GET'])
+@app.route('/example/country_data', methods=['GET'])
 def example_country_data():
     return jsonify(country_data)
 
 
-@app.route('/example/cities',methods=['GET'])
+@app.route('/example/cities', methods=['GET'])
 def example_cities():
     cities_list = []
-    cities_list.append(City("Gotham",0).__dict__)
+    cities_list.append(City("Gotham", 0).__dict__)
     cities_list.append(City("Metropolis", 1).__dict__)
     cities_list.append(City("#$%^&**", 2).__dict__)
     cities_list.append(City("Duckburg", 3).__dict__)
@@ -74,6 +74,7 @@ def example_places_amenities_prettified():
     output['data'] = data
     return jsonify(output)
 
+
 @app.route('/example/places_reviews', methods=['GET'])
 def example_places_reviews():
     review_list = review_data['Review']
@@ -96,6 +97,7 @@ def example_places_reviews():
                 review_item['user'] = user_item
 
     return jsonify(review_data)
+
 
 @app.route('/api/v1/users/<user_id>', methods=['GET'])
 def users_specific_get(user_id):
@@ -148,6 +150,7 @@ def users_post():
     }
 
     return jsonify(return_data)
+
 
 @app.route('/api/v1/users_modify', methods=['POST'])
 def users_modify():
@@ -235,16 +238,16 @@ def countries_get():
 
 @app.route('/api/v1/countries/<country_code>', methods=['GET'])
 def countries_specific_get(country_code):
-        country_to_return = None
-        for country in country_data['Country']:
-            if country['code'] == country_code:
-                country_to_return = country
-                break
+    country_to_return = None
+    for country in country_data['Country']:
+        if country['code'] == country_code:
+            country_to_return = country
+            break
 
-        if country_to_return is None:
-            return jsonify({"error": "Country not found"})
+    if country_to_return is None:
+        return jsonify({"error": "Country not found"})
 
-        return jsonify(country_to_return)
+    return jsonify(country_to_return)
 
 
 @app.route('/api/v1/countries/<country_code>/cities', methods=['GET'])
@@ -324,11 +327,11 @@ def cities_post():
             return jsonify({"error": "City already exists"})
 
     new_city = {
-       "id": str(uuid.uuid4()),
+        "id": str(uuid.uuid4()),
         "name": name,
         "country_id": country_id,
-        "created_at": datetime.now().timestamp(),
-        "updated_at": datetime.now().timestamp()
+        "created_at": datetime.now().isoformat(),
+        "updated_at": datetime.now().isoformat()
     }
     city_data['City'].append(new_city)
 
