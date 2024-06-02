@@ -308,7 +308,6 @@ def countries_specific_places_get(country_code):
 
 @app.route('/api/v1/cities_post', methods=['POST'])
 def cities_post():
-    city_data_list = []
 
     if not request.json:
         return jsonify({"message": "Missing JSON in request"})
@@ -329,7 +328,7 @@ def cities_post():
             return jsonify({"error": "City already exists"})
 
     new_city = City(name, country_id)
-    city_data_list.append({
+    city_data['City'].append({
         "id": new_city.id,
         "name": new_city.name,
         "country_id": new_city.country_id,
@@ -345,9 +344,65 @@ def cities_post():
         "updated_at": new_city.updated_at
     })
 
+
 @app.route('/api/v1/cities_get', methods=['GET'])
 def cities_get():
     city_data_list = city_data['City']
+    return jsonify(city_data_list)
+
+
+@app.route('/api/v1/cities_del_post', methods=['POST'])
+def cities_del_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if 'city_id' not in data:
+        return jsonify({"error": "Missing city_id"})
+
+    city_id = data['city_id']
+
+    city_data_list = city_data['City']
+    city_del = None
+
+    for i in range(len(city_data_list)):
+        if city_data_list[i]['id'] == city_id:
+            city_del = i
+            break
+
+    if city_del is None:
+        return jsonify({"error": "City not found"})
+
+    del city_data_list[city_del]
+
+    return jsonify(city_del)
+
+
+@app.route('/api/v1/cities_del_post', methods=['POST'])
+def cities_del_post():
+    if not request.json:
+        return jsonify({"message": "Missing JSON in request"})
+
+    data = request.get_json()
+
+    if 'city_id' not in data:
+        return jsonify({"error": "Missing city_id"})
+
+    city_id = data['city_id']
+    city_data_list = city_data['City']
+    city_del = None
+
+    for i in range(len(city_data_list)):
+        if city_data_list[i]['id'] == city_id:
+            city_del = i
+            break
+
+    if city_del is None:
+        return jsonify({"error": "City not found"})
+
+    del city_data_list[city_del]
+
     return jsonify(city_data_list)
 
 
