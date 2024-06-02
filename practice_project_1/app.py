@@ -382,12 +382,12 @@ def cities_del_post():
 @app.route('/api/v1/cities_modify_post', methods=['POST'])
 def cities_modify_post():
     if not request.json:
-        return jsonify({"message": "Missing JSON in request"}), 400
+        return jsonify({"message": "Missing JSON in request"})
 
     data = request.get_json()
 
     if 'id' not in data:
-        return jsonify({"error": "Missing id"}), 400
+        return jsonify({"error": "Missing id"})
 
     city_id = data['id']
     new_name = data.get('name')
@@ -402,7 +402,7 @@ def cities_modify_post():
             break
 
     if city_to_modify is None:
-        return jsonify({"error": "City not found"}), 404
+        return jsonify({"error": "City not found"})
 
     if new_name:
         city_to_modify['name'] = new_name
